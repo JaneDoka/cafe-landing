@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VIBE CAFÉ — место, где хочется остаться</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --coral:   #FF6B6B;
+      --yellow:  #FFE66D;
+      --purple:  #A855F7;
+      --dark:    #1A1A2E;
+      --darker:  #12122A;
+      --white:   #FFFFFF;
+      --gray:    #F5F5F5;
+      --text:    #2D2D2D;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      color: var(--text);
+      background: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* ─── NAVBAR ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 6%;
+      background: rgba(26,26,46,0.92);
+      backdrop-filter: blur(12px);
+      transition: padding .3s;
+    }
+    nav.scrolled { padding: 12px 6%; }
+
+    .logo {
+      font-size: 1.6rem; font-weight: 900; letter-spacing: 2px;
+      color: var(--white);
+      text-decoration: none;
+    }
+    .logo span { color: var(--coral); }
+
+    nav ul { list-style: none; display: flex; gap: 32px; }
+    nav ul li a {
+      color: rgba(255,255,255,.8); text-decoration: none;
+      font-size: .85rem; font-weight: 600; letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: color .2s;
+    }
+    nav ul li a:hover { color: var(--yellow); }
+
+    .nav-btn {
+      background: var(--coral); color: var(--white);
+      border: none; padding: 10px 22px; border-radius: 50px;
+      font-family: 'Montserrat', sans-serif; font-weight: 700;
+      font-size: .85rem; cursor: pointer; letter-spacing: .5px;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .nav-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,107,107,.5); }
+
+    /* burger */
+    .burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .burger span { width: 24px; height: 2px; background: var(--white); border-radius: 2px; transition: .3s; }
+
+    /* ─── HERO ─── */
+    #hero {
+      min-height: 100vh;
+      background: var(--dark);
+      display: flex; align-items: center;
+      padding: 100px 6% 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* animated blobs */
+    .blob {
+      position: absolute; border-radius: 50%;
+      filter: blur(80px); opacity: .35; animation: float 8s ease-in-out infinite;
+    }
+    .blob-1 { width: 480px; height: 480px; background: var(--coral); top: -100px; right: -80px; }
+    .blob-2 { width: 360px; height: 360px; background: var(--purple); bottom: -60px; left: 10%; animation-delay: -3s; }
+    .blob-3 { width: 260px; height: 260px; background: var(--yellow); top: 40%; left: 40%; animation-delay: -5s; }
+
+    @keyframes float {
+      0%,100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-30px) scale(1.05); }
+    }
+
+    .hero-content { position: relative; z-index: 2; max-width: 640px; }
+
+    .hero-tag {
+      display: inline-block;
+      background: var(--yellow); color: var(--dark);
+      font-size: .75rem; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; padding: 6px 16px; border-radius: 50px;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      color: var(--white); line-height: 1.1;
+      margin-bottom: 24px;
+    }
+    h1 em { font-style: italic; color: var(--coral); }
+
+    .hero-sub {
+      font-size: 1.1rem; color: rgba(255,255,255,.7);
+      line-height: 1.7; margin-bottom: 40px; max-width: 480px;
+    }
+
+    .hero-btns { display: flex; gap: 16px; flex-wrap: wrap; }
+
+    .btn-primary {
+      background: var(--coral); color: var(--white);
+      padding: 16px 36px; border-radius: 50px; font-weight: 700;
+      font-size: .95rem; text-decoration: none; letter-spacing: .5px;
+      transition: transform .2s, box-shadow .2s;
+      display: inline-block;
+    }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(255,107,107,.45); }
+
+    .btn-outline {
+      border: 2px solid rgba(255,255,255,.4); color: var(--white);
+      padding: 14px 34px; border-radius: 50px; font-weight: 600;
+      font-size: .95rem; text-decoration: none;
+      transition: border-color .2s, background .2s;
+      display: inline-block;
+    }
+    .btn-outline:hover { border-color: var(--yellow); background: rgba(255,230,109,.1); }
+
+    .hero-scroll {
+      position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      color: rgba(255,255,255,.4); font-size: .75rem; letter-spacing: 1px;
+      text-transform: uppercase; z-index: 2;
+      animation: bounce 2.5s ease-in-out infinite;
+    }
+    .hero-scroll::after {
+      content: ''; width: 1px; height: 40px; background: rgba(255,255,255,.3);
+    }
+    @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+
+    /* ─── SECTION COMMON ─── */
+    section { padding: 100px 6%; }
+
+    .section-tag {
+      display: inline-block;
+      background: var(--yellow); color: var(--dark);
+      font-size: .72rem; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; padding: 5px 14px; border-radius: 50px;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: var(--dark); margin-bottom: 16px;
+      line-height: 1.2;
+    }
+    .section-sub {
+      font-size: 1rem; color: #666; max-width: 540px; line-height: 1.7;
+      margin-bottom: 56px;
+    }
+
+    /* ─── MENU ─── */
+    #menu { background: var(--gray); }
+
+    .menu-tabs {
+      display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 48px;
+    }
+    .tab {
+      padding: 10px 24px; border-radius: 50px; border: 2px solid #ddd;
+      background: var(--white); font-weight: 600; font-size: .85rem;
+      cursor: pointer; transition: all .2s; color: #666;
+    }
+    .tab.active, .tab:hover {
+      background: var(--coral); border-color: var(--coral); color: var(--white);
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 28px;
+    }
+
+    .menu-card {
+      background: var(--white); border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,.07);
+      transition: transform .3s, box-shadow .3s;
+      cursor: pointer;
+    }
+    .menu-card:hover { transform: translateY(-6px); box-shadow: 0 12px 36px rgba(0,0,0,.13); }
+
+    .menu-img {
+      height: 180px; display: flex; align-items: center; justify-content: center;
+      font-size: 3.5rem; position: relative; overflow: hidden;
+    }
+    .menu-img::before {
+      content: ''; position: absolute; inset: 0;
+      background: inherit; opacity: 1;
+    }
+    .menu-img span { position: relative; z-index: 1; filter: drop-shadow(0 2px 8px rgba(0,0,0,.15)); }
+
+    .menu-body { padding: 20px; }
+    .menu-name { font-weight: 700; font-size: 1rem; margin-bottom: 6px; }
+    .menu-desc { font-size: .83rem; color: #888; line-height: 1.5; margin-bottom: 14px; }
+    .menu-footer { display: flex; align-items: center; justify-content: space-between; }
+    .menu-price { font-weight: 900; font-size: 1.1rem; color: var(--coral); }
+    .menu-add {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--coral); color: var(--white);
+      border: none; font-size: 1.2rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .menu-add:hover { transform: scale(1.15); box-shadow: 0 4px 12px rgba(255,107,107,.4); }
+
+    /* category hidden/shown */
+    .menu-card[data-cat] { display: none; }
+    .menu-card.visible { display: block; }
+
+    /* ─── ABOUT ─── */
+    #about {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: center;
+    }
+
+    .about-visual {
+      position: relative;
+    }
+    .about-big-card {
+      background: linear-gradient(135deg, var(--coral), var(--purple));
+      border-radius: 28px; aspect-ratio: 4/5;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 8rem;
+    }
+    .about-badge {
+      position: absolute; bottom: -20px; right: -20px;
+      background: var(--yellow); color: var(--dark);
+      border-radius: 20px; padding: 18px 24px; text-align: center;
+      box-shadow: 0 8px 28px rgba(0,0,0,.15);
+    }
+    .about-badge strong { display: block; font-size: 2.2rem; font-weight: 900; line-height: 1; }
+    .about-badge span { font-size: .8rem; font-weight: 600; letter-spacing: .5px; }
+
+    .about-text .section-title { margin-top: 12px; }
+
+    .about-stats {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 24px; margin-top: 40px;
+    }
+    .stat { text-align: center; padding: 20px; background: var(--gray); border-radius: 16px; }
+    .stat strong { display: block; font-size: 1.8rem; font-weight: 900; color: var(--coral); }
+    .stat span { font-size: .78rem; color: #888; font-weight: 600; letter-spacing: .5px; text-transform: uppercase; }
+
+    .about-features { display: flex; flex-direction: column; gap: 16px; margin-top: 36px; }
+    .feature {
+      display: flex; align-items: center; gap: 16px;
+      padding: 16px 20px; background: var(--gray); border-radius: 14px;
+    }
+    .feature-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--coral); display: flex; align-items: center;
+      justify-content: center; font-size: 1.2rem; flex-shrink: 0;
+    }
+    .feature-text strong { display: block; font-size: .9rem; font-weight: 700; margin-bottom: 2px; }
+    .feature-text span { font-size: .8rem; color: #888; }
+
+    /* ─── GALLERY ─── */
+    #gallery { background: var(--dark); }
+    #gallery .section-title { color: var(--white); }
+    #gallery .section-sub { color: rgba(255,255,255,.6); }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(2, 200px);
+      gap: 16px;
+    }
+
+    .gal-item {
+      border-radius: 18px; overflow: hidden;
+      cursor: pointer; position: relative;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3.5rem;
+      transition: transform .3s;
+    }
+    .gal-item:hover { transform: scale(1.03); }
+    .gal-item:hover .gal-overlay { opacity: 1; }
+
+    .gal-item:nth-child(1) { grid-column: span 2; grid-row: span 2; background: linear-gradient(135deg,#FF6B6B,#FF8E53); }
+    .gal-item:nth-child(2) { background: linear-gradient(135deg,#A855F7,#7C3AED); }
+    .gal-item:nth-child(3) { background: linear-gradient(135deg,#FFE66D,#F59E0B); }
+    .gal-item:nth-child(4) { background: linear-gradient(135deg,#34D399,#059669); }
+    .gal-item:nth-child(5) { background: linear-gradient(135deg,#60A5FA,#2563EB); }
+
+    .gal-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,.45);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity .3s;
+    }
+    .gal-overlay span {
+      color: var(--white); font-size: .85rem; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase;
+      border: 2px solid var(--white); padding: 8px 18px; border-radius: 50px;
+    }
+
+    /* lightbox */
+    .lightbox {
+      position: fixed; inset: 0; background: rgba(0,0,0,.9);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000; opacity: 0; pointer-events: none; transition: opacity .3s;
+    }
+    .lightbox.open { opacity: 1; pointer-events: all; }
+    .lightbox-content {
+      background: var(--dark); border-radius: 24px; padding: 40px;
+      max-width: 500px; width: 90%; text-align: center; position: relative;
+    }
+    .lightbox-emoji { font-size: 6rem; margin-bottom: 20px; display: block; }
+    .lightbox-close {
+      position: absolute; top: 16px; right: 20px;
+      background: none; border: none; color: var(--white);
+      font-size: 1.5rem; cursor: pointer;
+    }
+
+    /* ─── CONTACTS ─── */
+    #contacts { background: var(--gray); }
+
+    .contacts-wrap {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 60px; align-items: start;
+    }
+
+    .contact-info { display: flex; flex-direction: column; gap: 24px; }
+
+    .c-item {
+      display: flex; align-items: flex-start; gap: 18px;
+      padding: 24px; background: var(--white); border-radius: 18px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    }
+    .c-icon {
+      width: 48px; height: 48px; border-radius: 14px;
+      background: var(--coral); display: flex; align-items: center;
+      justify-content: center; font-size: 1.3rem; flex-shrink: 0;
+    }
+    .c-body strong { display: block; font-size: .8rem; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase; color: #aaa; margin-bottom: 4px; }
+    .c-body span { font-size: .95rem; font-weight: 600; color: var(--dark); }
+
+    /* map placeholder */
+    .map-box {
+      background: linear-gradient(135deg, var(--dark), #2a2a4a);
+      border-radius: 24px; height: 340px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 16px;
+      color: var(--white); overflow: hidden; position: relative;
+    }
+    .map-box::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at 40% 50%, rgba(168,85,247,.25) 0%, transparent 60%),
+                  radial-gradient(circle at 70% 70%, rgba(255,107,107,.2) 0%, transparent 50%);
+    }
+    .map-pin { font-size: 3.5rem; position: relative; animation: pinBounce 2s ease-in-out infinite; }
+    @keyframes pinBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    .map-address { position: relative; font-size: .9rem; opacity: .8; text-align: center; line-height: 1.6; }
+    .map-btn {
+      position: relative; background: var(--coral); color: var(--white);
+      border: none; padding: 12px 28px; border-radius: 50px;
+      font-family: 'Montserrat', sans-serif; font-weight: 700;
+      font-size: .85rem; cursor: pointer; letter-spacing: .5px;
+      transition: transform .2s, box-shadow .2s;
+      text-decoration: none; display: inline-block;
+    }
+    .map-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(255,107,107,.4); }
+
+    /* form */
+    .contact-form { display: flex; flex-direction: column; gap: 16px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .form-group label { font-size: .8rem; font-weight: 700; color: #666; letter-spacing: .5px; text-transform: uppercase; }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      padding: 14px 18px; border: 2px solid #e8e8e8; border-radius: 14px;
+      font-family: 'Montserrat', sans-serif; font-size: .9rem; color: var(--text);
+      background: var(--white); transition: border-color .2s, box-shadow .2s;
+      outline: none;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: var(--coral); box-shadow: 0 0 0 4px rgba(255,107,107,.12);
+    }
+    .form-group textarea { resize: vertical; min-height: 110px; }
+    .form-submit {
+      background: var(--coral); color: var(--white);
+      border: none; padding: 16px 36px; border-radius: 50px;
+      font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: .95rem;
+      cursor: pointer; letter-spacing: .5px; transition: transform .2s, box-shadow .2s;
+      align-self: flex-start;
+    }
+    .form-submit:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(255,107,107,.4); }
+    .form-success {
+      display: none; padding: 16px 24px; background: #d1fae5; border-radius: 14px;
+      color: #065f46; font-weight: 600; font-size: .9rem;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--darker);
+      padding: 60px 6% 40px;
+      color: rgba(255,255,255,.5);
+    }
+    .footer-top {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      flex-wrap: wrap; gap: 40px; margin-bottom: 48px;
+    }
+    .footer-brand .logo { font-size: 1.4rem; }
+    .footer-brand p { margin-top: 12px; font-size: .85rem; max-width: 240px; line-height: 1.6; }
+
+    .footer-links h4 { color: var(--white); font-size: .85rem; letter-spacing: 1px;
+      text-transform: uppercase; margin-bottom: 16px; }
+    .footer-links ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-links ul li a { color: rgba(255,255,255,.5); text-decoration: none; font-size: .85rem;
+      transition: color .2s; }
+    .footer-links ul li a:hover { color: var(--yellow); }
+
+    .social-links { display: flex; gap: 12px; margin-top: 20px; }
+    .social-links a {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: rgba(255,255,255,.08); display: flex; align-items: center;
+      justify-content: center; font-size: 1.1rem; text-decoration: none;
+      transition: background .2s, transform .2s;
+    }
+    .social-links a:hover { background: var(--coral); transform: translateY(-3px); }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,.08);
+      padding-top: 28px; display: flex;
+      justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 12px;
+      font-size: .8rem;
+    }
+    .footer-bottom a { color: var(--coral); text-decoration: none; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      #about { grid-template-columns: 1fr; gap: 48px; }
+      .about-visual { max-width: 400px; margin: 0 auto; }
+      .about-big-card { aspect-ratio: 16/9; }
+      .contacts-wrap { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(3, 160px); }
+      .gal-item:nth-child(1) { grid-column: span 2; grid-row: span 1; }
+    }
+
+    @media (max-width: 680px) {
+      nav ul, .nav-btn { display: none; }
+      .burger { display: flex; }
+      nav ul.open {
+        display: flex; flex-direction: column; gap: 0;
+        position: absolute; top: 100%; left: 0; right: 0;
+        background: var(--darker); padding: 20px 6%;
+      }
+      nav ul.open li a { display: block; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.08); }
+      .hero-btns { flex-direction: column; align-items: flex-start; }
+      .form-row { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: 1fr; grid-template-rows: auto; }
+      .gal-item { aspect-ratio: 4/3; height: auto; }
+      .gal-item:nth-child(1) { grid-column: span 1; grid-row: span 1; }
+      .about-stats { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="#" class="logo">VIBE<span>.</span>CAFÉ</a>
+  <ul id="navList">
+    <li><a href="#menu">Меню</a></li>
+    <li><a href="#about">О нас</a></li>
+    <li><a href="#gallery">Галерея</a></li>
+    <li><a href="#contacts">Контакты</a></li>
+  </ul>
+  <button class="nav-btn" onclick="document.getElementById('contacts').scrollIntoView({behavior:'smooth'})">Забронировать</button>
+  <div class="burger" id="burger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <div class="hero-content">
+    <div class="hero-tag">✨ Открыто каждый день</div>
+    <h1>Место, где хочется <em>остаться</em></h1>
+    <p class="hero-sub">Уютные уголки, авторские кофе-напитки и еда, которая вдохновляет. Приходи один или с друзьями — мы рады всем.</p>
+    <div class="hero-btns">
+      <a href="#menu" class="btn-primary">Смотреть меню</a>
+      <a href="#about" class="btn-outline">Узнать больше</a>
+    </div>
+  </div>
+  <div class="hero-scroll">Скролл</div>
+</section>
+
+<!-- MENU -->
+<section id="menu">
+  <div class="section-tag">☕ Меню</div>
+  <h2 class="section-title">Попробуй что-нибудь <br>особенное</h2>
+  <p class="section-sub">Каждое блюдо и напиток мы готовим с любовью — из свежих сезонных продуктов.</p>
+
+  <div class="menu-tabs">
+    <button class="tab active" onclick="filterMenu('coffee', this)">☕ Кофе</button>
+    <button class="tab" onclick="filterMenu('food', this)">🍽 Еда</button>
+    <button class="tab" onclick="filterMenu('dessert', this)">🍰 Десерты</button>
+    <button class="tab" onclick="filterMenu('cold', this)">🧃 Холодные</button>
+  </div>
+
+  <div class="menu-grid" id="menuGrid">
+    <!-- COFFEE -->
+    <div class="menu-card" data-cat="coffee">
+      <div class="menu-img" style="background:linear-gradient(135deg,#6B4226,#A0522D)"><span>☕</span></div>
+      <div class="menu-body">
+        <div class="menu-name">Флэт уайт</div>
+        <div class="menu-desc">Двойной эспрессо с бархатистым молоком. Мягко и сбалансировано.</div>
+        <div class="menu-footer">
+          <span class="menu-price">220 ₽</span>
+          <button class="menu-add">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="menu-card" data-cat="coffee">
+      <div class="menu-img" style="background:linear-gradient(135deg,#C8A96E,#8B5E3C)"><span>🫖</span></div>
+      <div class="menu-body">
+        <div class="menu-name">Раф «Карамель»</div>
+        <div class="menu-desc">Нежная смесь сливок, эспрессо и карамельного сиропа.</div>
+        <div class="menu-footer">
+          <span class="menu-price">280 ₽</span>
+          <button class="menu-add">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="menu-card" data-cat="coffee">
+      <div class="menu-img" style="background:linear-gradient(135deg,#1A1A2E,#6B3FA0)"><span>🌙</span></div>
+      <div class="menu-body">
+        <div class="menu-name">Матча латте</div>
+        <div class="menu-desc">Японский зелёный чай с оat milk и щепоткой ванили.</div>
+        <div class="menu-footer">
+          <span class="menu-price">260 ₽</span>
+          <button class="menu-add">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="menu-card" data-cat="coffee">
+      <div class="menu-img" style="background:linear-gradient(135deg,#FF6B6B,#FF9800)"><span>🍊</span></div>
+      <div class="menu-body">
+        <div class="menu-name">Эспрессо-тоник</div>
+        <div class="menu-desc">Бодрящий эспрессо с тоником и апельсиновой цедрой.</div>
+        <div class="menu-footer">
+          <span class="menu-price">240 ₽</span>
+          <button class="menu-add">+</button>
+        </div>
+      </div>
+    </div>
+    <!-- FOOD -->
+    <div class="menu-card" data-cat="food">
+      <div class="menu-img" style="background:linear-gradient(135deg,#F59E0B,#EF4444)"><span>🥑</span></div>
+      <div class="menu-body">
+        <div class="menu-name">Тост с авокадо</div>
+        <div class="menu-desc">Хрустящий хлеб, авокадо, яйцо пашот, микс-зелень, соус чили.</div>
+        <div class="menu-footer">
+          <span class="menu-price">390 ₽</span>
+          <button class="menu-add">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="menu-card" data-cat="food">
+      <div class="menu-img" style="background:linear-gradient(135deg,#34D399,#059669)"><span>🥗</span></div>
+      <div class="menu-body">
+        <div class="menu-name">Боул «Vibe»</div>
+        <div class="menu-desc">Киноа, запечённые овощи, хумус, гранатовый соус.</div>
+        <div class="menu-footer">
+          <span class="menu-price">450 ₽</span>
+          <button class="menu-add">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="menu-card" data-cat="food">
+      <div class="menu-img" style="background:linear-gradient(135deg,#F97316,#DC2626)"><span>🥪</span></div>
+      <div class="menu-body">
+        <div class="menu-name">Сэндвич с лососем</div>
+        <div class="menu-desc">Слабосолёный лосось, сливочный сыр, каперсы, укроп.</div>
+        <div class="menu-footer">
+          <span class="menu-price">420 ₽</span>
+          <button class="menu-add">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="menu-card" data-cat="food">
+      <div class="menu-img" style="background:linear-gradient(135deg,#FDE68A,#F59E0B)"><span>🍳</span></div>
+      <div class="menu-body">
+        <div class="menu-name">Яичница с трюфелем</div>
+        <div class="menu-desc">Яйца скрэмбл, трюфельное масло, пармезан, чиабатта.</div>
+        <div class="menu-footer">
+          <span class="menu-price">480 ₽</span>
+          <button class="menu-add">+</button>
+        </div>
+      </div>
+    </div>
+    <!-- DESSERTS -->
+    <div class="menu-card" data-cat="dessert">
+      <div class="menu-img" style="background:linear-gradient(135deg,#EC4899,#8B5CF6)"><span>🍰</span></div>
+      <div class="menu-body">
+        <div class="menu-name">Торт «Красный бархат»</div>
+        <div class="menu-desc">Влажные коржи, крем-чиз, ягодный кули.</div>
+        <div class="menu-footer">
+          <span class="menu-price">320 ₽</span>
+          <button class="menu-add">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="menu-card" data-cat="dessert">
+      <div class="menu-img" style="background:linear-gradient(135deg,#F3D0B5,#C8956C)"><span>🧇</span></div>
+      <div class="menu-body">
+        <div class="menu-name">Вафли с ягодами</div>
+        <div class="menu-desc">Хрустящие бельгийские вафли, свежие ягоды, взбитые сливки.</div>
+        <div class="menu-footer">
+          <span class="menu-price">340 ₽</span>
+          <button class="menu-add">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="menu-card" data-cat="dessert">
+      <div class="menu-img" style="background:linear-gradient(135deg,#A3E635,#16A34A)"><span>🍮</span></div>
+      <div class="menu-body">
+        <div class="menu-name">Панна-котта «Манго»</div>
+        <div class="menu-desc">Нежный десерт с манговым соусом и листьями мяты.</div>
+        <div class="menu-footer">
+          <span class="menu-price">280 ₽</span>
+          <button class="menu-add">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="menu-card" data-cat="dessert">
+      <div class="menu-img" style="background:linear-gradient(135deg,#7C3AED,#4F46E5)"><span>🍫</span></div>
+      <div class="menu-body">
+        <div class="menu-name">Брауни с мороженым</div>
+        <div class="menu-desc">Тёплый шоколадный брауни, ванильный пломбир, топпинг.</div>
+        <div class="menu-footer">
+          <span class="menu-price">310 ₽</span>
+          <button class="menu-add">+</button>
+        </div>
+      </div>
+    </div>
+    <!-- COLD -->
+    <div class="menu-card" data-cat="cold">
+      <div class="menu-img" style="background:linear-gradient(135deg,#FDE68A,#F97316)"><span>🧃</span></div>
+      <div class="menu-body">
+        <div class="menu-name">Лимонад «Тропик»</div>
+        <div class="menu-desc">Маракуйя, манго, мята, газированная вода.</div>
+        <div class="menu-footer">
+          <span class="menu-price">220 ₽</span>
+          <button class="menu-add">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="menu-card" data-cat="cold">
+      <div class="menu-img" style="background:linear-gradient(135deg,#60A5FA,#1D4ED8)"><span>🫐</span></div>
+      <div class="menu-body">
+        <div class="menu-name">Смузи «Berry Boost»</div>
+        <div class="menu-desc">Черника, ежевика, банан, кокосовое молоко.</div>
+        <div class="menu-footer">
+          <span class="menu-price">270 ₽</span>
+          <button class="menu-add">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="menu-card" data-cat="cold">
+      <div class="menu-img" style="background:linear-gradient(135deg,#D1FAE5,#34D399)"><span>🍵</span></div>
+      <div class="menu-body">
+        <div class="menu-name">Айс матча</div>
+        <div class="menu-desc">Матча на льду с кокосовым молоком и сиропом агавы.</div>
+        <div class="menu-footer">
+          <span class="menu-price">250 ₽</span>
+          <button class="menu-add">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="menu-card" data-cat="cold">
+      <div class="menu-img" style="background:linear-gradient(135deg,#FECDD3,#F43F5E)"><span>🍓</span></div>
+      <div class="menu-body">
+        <div class="menu-name">Клубничный раф холодный</div>
+        <div class="menu-desc">Клубника, кофе, сливки со льдом — летнее настроение.</div>
+        <div class="menu-footer">
+          <span class="menu-price">290 ₽</span>
+          <button class="menu-add">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-visual">
+    <div class="about-big-card">☕</div>
+    <div class="about-badge">
+      <strong>2020</strong>
+      <span>Год открытия</span>
+    </div>
+  </div>
+  <div class="about-text">
+    <div class="section-tag">💛 О нас</div>
+    <h2 class="section-title">Больше, чем просто кофе</h2>
+    <p class="section-sub">VIBE CAFÉ — это место, где время замедляется. Мы создаём пространство для работы, встреч и вдохновения в самом центре города.</p>
+    <div class="about-stats">
+      <div class="stat"><strong>12 000+</strong><span>Гостей</span></div>
+      <div class="stat"><strong>48</strong><span>Позиций меню</span></div>
+      <div class="stat"><strong>4.9★</strong><span>Рейтинг</span></div>
+    </div>
+    <div class="about-features">
+      <div class="feature">
+        <div class="feature-icon">🌱</div>
+        <div class="feature-text">
+          <strong>Свежие продукты каждый день</strong>
+          <span>Поставки от местных фермеров — без заморозки и консервантов</span>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">💻</div>
+        <div class="feature-text">
+          <strong>Удобно для работы</strong>
+          <span>Быстрый Wi-Fi, розетки у каждого стола, тихая атмосфера</span>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🎵</div>
+        <div class="feature-text">
+          <strong>Живая музыка по пятницам</strong>
+          <span>Локальные артисты и приятная атмосфера каждые выходные</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery">
+  <div class="section-tag">📸 Галерея</div>
+  <h2 class="section-title">Атмосфера VIBE</h2>
+  <p class="section-sub">Загляни к нам вживую — или посмотри как это выглядит изнутри.</p>
+  <div class="gallery-grid">
+    <div class="gal-item" onclick="openLightbox('Интерьер кафе','Уютный главный зал с живыми растениями и тёплым освещением')">
+      <span>🏠</span>
+      <div class="gal-overlay"><span>Интерьер</span></div>
+    </div>
+    <div class="gal-item" onclick="openLightbox('Наш кофе','Каждая чашка — маленькое произведение искусства')">
+      <span>☕</span>
+      <div class="gal-overlay"><span>Кофе</span></div>
+    </div>
+    <div class="gal-item" onclick="openLightbox('Десерты','Домашняя выпечка каждое утро')">
+      <span>🍰</span>
+      <div class="gal-overlay"><span>Десерты</span></div>
+    </div>
+    <div class="gal-item" onclick="openLightbox('Летняя терраса','Открытая терраса с видом на парк — только в тёплый сезон')">
+      <span>🌿</span>
+      <div class="gal-overlay"><span>Терраса</span></div>
+    </div>
+    <div class="gal-item" onclick="openLightbox('Наша команда','Бариста с душой — каждый напиток готовится с заботой')">
+      <span>👨‍🍳</span>
+      <div class="gal-overlay"><span>Команда</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+  <div class="lightbox-content">
+    <button class="lightbox-close" onclick="document.getElementById('lightbox').classList.remove('open')">✕</button>
+    <span class="lightbox-emoji" id="lbEmoji"></span>
+    <h3 id="lbTitle" style="color:white;font-family:'Playfair Display',serif;font-size:1.5rem;margin-bottom:12px"></h3>
+    <p id="lbDesc" style="color:rgba(255,255,255,.7);font-size:.9rem;line-height:1.6"></p>
+  </div>
+</div>
+
+<!-- CONTACTS -->
+<section id="contacts">
+  <div class="section-tag">📍 Контакты</div>
+  <h2 class="section-title">Найди нас</h2>
+  <p class="section-sub">Ждём тебя каждый день — приходи на завтрак, обед или вечерний кофе.</p>
+  <div class="contacts-wrap">
+    <div>
+      <div class="contact-info">
+        <div class="c-item">
+          <div class="c-icon">📍</div>
+          <div class="c-body">
+            <strong>Адрес</strong>
+            <span>ул. Арбат, 12, Москва</span>
+          </div>
+        </div>
+        <div class="c-item">
+          <div class="c-icon">🕐</div>
+          <div class="c-body">
+            <strong>Часы работы</strong>
+            <span>Пн–Пт: 08:00–22:00 · Сб–Вс: 09:00–23:00</span>
+          </div>
+        </div>
+        <div class="c-item">
+          <div class="c-icon">📞</div>
+          <div class="c-body">
+            <strong>Телефон</strong>
+            <span>+7 (495) 123-45-67</span>
+          </div>
+        </div>
+        <div class="c-item">
+          <div class="c-icon">✉️</div>
+          <div class="c-body">
+            <strong>Email</strong>
+            <span>hello@vibecafe.ru</span>
+          </div>
+        </div>
+      </div>
+      <div class="map-box" style="margin-top:28px">
+        <div class="map-pin">📍</div>
+        <div class="map-address">ул. Арбат, 12<br>м. Арбатская, 3 мин пешком</div>
+        <a class="map-btn" href="https://yandex.ru/maps/" target="_blank">Открыть в картах</a>
+      </div>
+    </div>
+    <div>
+      <form class="contact-form" onsubmit="submitForm(event)">
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.6rem;margin-bottom:8px">Забронировать столик</h3>
+        <p style="color:#888;font-size:.88rem;margin-bottom:12px;line-height:1.6">Оставь заявку — мы свяжемся в течение 30 минут</p>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Имя</label>
+            <input type="text" placeholder="Твоё имя" required />
+          </div>
+          <div class="form-group">
+            <label>Телефон</label>
+            <input type="tel" placeholder="+7 (___) ___-__-__" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Дата</label>
+            <input type="date" required />
+          </div>
+          <div class="form-group">
+            <label>Количество гостей</label>
+            <select>
+              <option>1 человек</option>
+              <option>2 человека</option>
+              <option selected>3–4 человека</option>
+              <option>5–6 человек</option>
+              <option>7+ человек</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Пожелания</label>
+          <textarea placeholder="Особые пожелания, аллергии, украшение стола..."></textarea>
+        </div>
+        <button type="submit" class="form-submit">Забронировать →</button>
+        <div class="form-success" id="formSuccess">
+          ✅ Спасибо! Мы свяжемся с тобой в течение 30 минут.
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="#" class="logo">VIBE<span>.</span>CAFÉ</a>
+      <p>Место, где время замедляется и кофе вкуснее.</p>
+      <div class="social-links">
+        <a href="#" title="Instagram">📸</a>
+        <a href="#" title="Telegram">✈️</a>
+        <a href="#" title="VKontakte">🔵</a>
+        <a href="#" title="YouTube">▶️</a>
+      </div>
+    </div>
+    <div class="footer-links">
+      <h4>Навигация</h4>
+      <ul>
+        <li><a href="#menu">Меню</a></li>
+        <li><a href="#about">О нас</a></li>
+        <li><a href="#gallery">Галерея</a></li>
+        <li><a href="#contacts">Контакты</a></li>
+      </ul>
+    </div>
+    <div class="footer-links">
+      <h4>Информация</h4>
+      <ul>
+        <li><a href="#">Доставка</a></li>
+        <li><a href="#">Кейтеринг</a></li>
+        <li><a href="#">Вакансии</a></li>
+        <li><a href="#">Политика конфиденциальности</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2024 VIBE CAFÉ. Все права защищены.</span>
+    <span>Сделано с ☕ и ❤️</span>
+  </div>
+</footer>
+
+<script>
+  // Navbar scroll
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Burger menu
+  function toggleMenu() {
+    document.getElementById('navList').classList.toggle('open');
+  }
+
+  // Menu filter
+  function filterMenu(cat, btn) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.menu-card').forEach(card => {
+      card.classList.toggle('visible', card.dataset.cat === cat);
+    });
+  }
+  // Show default category on load
+  document.querySelectorAll('.menu-card[data-cat="coffee"]').forEach(c => c.classList.add('visible'));
+
+  // Lightbox
+  const emojiMap = { 'Интерьер кафе':'🏠', 'Наш кофе':'☕', 'Десерты':'🍰', 'Летняя терраса':'🌿', 'Наша команда':'👨‍🍳' };
+  function openLightbox(title, desc) {
+    document.getElementById('lbEmoji').textContent = emojiMap[title] || '📸';
+    document.getElementById('lbTitle').textContent = title;
+    document.getElementById('lbDesc').textContent = desc;
+    document.getElementById('lightbox').classList.add('open');
+  }
+  function closeLightbox(e) {
+    if (e.target === document.getElementById('lightbox')) {
+      document.getElementById('lightbox').classList.remove('open');
+    }
+  }
+
+  // Form submit
+  function submitForm(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('.form-submit');
+    btn.textContent = 'Отправляем...';
+    btn.disabled = true;
+    setTimeout(() => {
+      document.getElementById('formSuccess').style.display = 'block';
+      btn.style.display = 'none';
+      e.target.querySelectorAll('input, textarea, select').forEach(el => el.value = '');
+    }, 1200);
+  }
+
+  // Smooth active nav link highlight
+  const sections = document.querySelectorAll('section[id]');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) current = s.id; });
+    document.querySelectorAll('nav ul li a').forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + current ? 'var(--yellow)' : '';
+    });
+  });
+</script>
+</body>
+</html>
